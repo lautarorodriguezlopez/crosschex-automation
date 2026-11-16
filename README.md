@@ -4,6 +4,8 @@ Este proyecto baja los fichajes de **CrossChex** y los guarda en una carpeta loc
 
 ![Resumen del reporte](docs/resumen.png)
 
+▶ **[Ver el video de demostración](docs/demo.mp4)** (1:16, datos ficticios)
+
 Solo necesita **Python 3.10 o más nuevo**: usa la biblioteca estándar y no hay que instalar nada con pip.
 
 ```
