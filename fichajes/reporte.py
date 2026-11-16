@@ -383,6 +383,7 @@ function showTip(e, html){ tip.innerHTML = html; tip.classList.add("on");
   if (y + r.height > innerHeight - 8) y = e.clientY - r.height - 14;
   tip.style.left = x + "px"; tip.style.top = y + "px"; }
 const hideTip = () => tip.classList.remove("on");
+addEventListener("scroll", hideTip, {passive:true});
 
 // ---------- KPIs ----------
 function kpis(){

@@ -2,6 +2,8 @@
 
 Este proyecto baja los fichajes de **CrossChex** y los guarda en una carpeta local. Después detecta anomalías y abre un reporte HTML en `http://localhost:8765`. Una tarea programada lo corre solo todos los días.
 
+![Resumen del reporte](docs/resumen.png)
+
 Solo necesita **Python 3.10 o más nuevo**: usa la biblioteca estándar y no hay que instalar nada con pip.
 
 ```
@@ -80,6 +82,8 @@ Está pensado como una bandeja de revisión por excepción, como las de los sist
 - **Detalle de la jornada:** al tocar una fila o una celda se abre un panel con la línea de tiempo del turno programado contra el tiempo trabajado. El fichaje sin par aparece en rojo.
 
 La severidad siempre se muestra con ícono y texto, no solo con color. El reporte tiene modo claro y oscuro (botón arriba a la derecha) y se adapta al celular. Usa la tipografía Inter, incrustada en el archivo para que funcione sin internet; su licencia SIL OFL está en `fichajes/assets/`.
+
+![Detalle de una jornada](docs/detalle.png)
 
 ## Comandos
 
