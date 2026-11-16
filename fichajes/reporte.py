@@ -11,6 +11,7 @@ Patrones tomados de herramientas de control horario (Dayforce, ADP, Indigo):
 from __future__ import annotations
 
 import base64
+import hashlib
 import json
 from datetime import datetime
 from pathlib import Path
@@ -22,6 +23,8 @@ PLANTILLA = r"""<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="__CSP__">
+<meta name="referrer" content="no-referrer">
 <title>Control de fichajes</title>
 <style>
 @font-face{font-family:"Inter var";font-style:normal;font-weight:100 900;font-display:swap;
@@ -465,7 +468,7 @@ function mapa(){
     const celdas = rango.map(d => { const k = l + "|" + d, an = byDay[k] || [], dia = diaIdx[k];
       total += an.length;
       const cls = an.length ? worst(an) : dia ? "ok" : "off";
-      return `<td class="c ${cls} ${an.length > 1 ? "n" : ""}" data-n="${an.length}" data-k="${k}"></td>`; }).join("");
+      return `<td class="c ${cls} ${an.length > 1 ? "n" : ""}" data-n="${an.length}" data-k="${esc(k)}"></td>`; }).join("");
     return `<tr><td class="who">${quien(l)}</td>${celdas}<td class="tot num">${total}</td></tr>`; }).join("");
   $("#hm").innerHTML = `<table>${head}${filas}</table>`;
   document.querySelectorAll("#hm td.c").forEach(td => {
@@ -603,6 +606,22 @@ render();
 """
 
 
+def _csp(html: str) -> str:
+    """CSP del reporte: solo corre su propio script (por hash) y no puede conectarse a ningún lado.
+
+    Aunque un dato de CrossChex intentara inyectar código, el navegador no lo ejecutaría ni
+    podría mandar los fichajes del personal a otro sitio (connect-src, img-src y form-action cerrados).
+    """
+    i = html.index("<script>") + len("<script>")
+    script = html[i:html.index("</script>", i)]
+    sha = base64.b64encode(hashlib.sha256(script.encode("utf-8")).digest()).decode("ascii")
+    return ("default-src 'none'; "
+            f"script-src 'sha256-{sha}'; "
+            "style-src 'unsafe-inline'; "
+            "font-src data:; img-src data:; "
+            "base-uri 'none'; form-action 'none'")
+
+
 def generar(resultado: dict, carpeta: Path, periodo: str, fuente: str, no_parseados: int = 0,
             rango: tuple[str, str] | None = None, corte: str = "05:00") -> Path:
     carpeta = Path(carpeta)
@@ -625,6 +644,7 @@ def generar(resultado: dict, carpeta: Path, periodo: str, fuente: str, no_parsea
     js = json.dumps(datos, ensure_ascii=False).replace("</", "<\\/")
     fuente_b64 = base64.b64encode(FUENTE.read_bytes()).decode("ascii") if FUENTE.exists() else ""
     contenido = PLANTILLA.replace("__FUENTE__", fuente_b64).replace("__DATA__", js)
+    contenido = contenido.replace("__CSP__", _csp(contenido))
     sello = datetime.now().strftime("%Y-%m-%d_%H%M")
     ruta = carpeta / f"reporte_{sello}.html"
     ruta.write_text(contenido, encoding="utf-8")

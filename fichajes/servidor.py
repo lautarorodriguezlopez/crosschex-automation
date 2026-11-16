@@ -12,11 +12,41 @@ from pathlib import Path
 
 
 class _Silencioso(http.server.SimpleHTTPRequestHandler):
+    """Sirve solo los reportes, solo a esta computadora y con headers de seguridad."""
+
     def log_message(self, *args):
         pass
 
+    def _host_valido(self) -> bool:
+        # Contra DNS rebinding: una web maliciosa podría hacer que su dominio apunte a
+        # 127.0.0.1 y leer el reporte desde el navegador. Solo se aceptan pedidos dirigidos
+        # a localhost o 127.0.0.1 en el puerto de este servidor.
+        puerto = self.server.server_address[1]
+        return (self.headers.get("Host") or "").lower() in {f"localhost:{puerto}", f"127.0.0.1:{puerto}"}
+
+    def do_GET(self):
+        if not self._host_valido():
+            self.send_error(403, "Host no permitido")
+            return
+        super().do_GET()
+
+    def do_HEAD(self):
+        if not self._host_valido():
+            self.send_error(403, "Host no permitido")
+            return
+        super().do_HEAD()
+
+    def list_directory(self, path):
+        # Sin listado de carpetas: solo se sirven los archivos del reporte.
+        self.send_error(404, "No encontrado")
+        return None
+
     def end_headers(self):
         self.send_header("Cache-Control", "no-store")
+        self.send_header("X-Content-Type-Options", "nosniff")
+        self.send_header("X-Frame-Options", "DENY")
+        self.send_header("Referrer-Policy", "no-referrer")
+        self.send_header("Cross-Origin-Resource-Policy", "same-origin")
         super().end_headers()
 
 
