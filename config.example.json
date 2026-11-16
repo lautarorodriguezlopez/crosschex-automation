@@ -1,0 +1,42 @@
+{
+  "crosschex": {
+    "base_url": "https://api.us.crosschexcloud.com/",
+    "api_key": "PEGAR_API_KEY",
+    "api_secret": "PEGAR_API_SECRET"
+  },
+  "zona_horaria": "-03:00",
+  "dias_descarga": 3,
+  "dias_analisis": 31,
+  "incluir_hoy": false,
+  "servidor": { "puerto": 8765, "minutos_abierto": 120, "abrir_navegador": true },
+  "reglas": {
+    "hora_corte_jornada": "05:00",
+    "minutos_duplicado": 3,
+    "tolerancia_minutos": 10,
+    "jornada_maxima_horas": 12,
+    "jornada_minima_horas": 2,
+    "pausa_maxima_minutos": 90
+  },
+  "feriados": ["2026-12-08", "2026-12-25", "2027-01-01"],
+  "horarios": {
+    "por_defecto": null,
+    "empleados": {
+      "101": {
+        "nombre": "Nombre Apellido",
+        "turnos": { "lun": ["09:00", "17:00"], "mar": ["09:00", "17:00"], "mie": ["09:00", "17:00"],
+                    "jue": ["09:00", "17:00"], "vie": ["09:00", "17:00"] }
+      },
+      "102": {
+        "nombre": "Turno noche",
+        "turnos": { "vie": ["20:00", "03:00"], "sab": ["20:00", "03:00"] }
+      }
+    }
+  },
+  "columnas_csv": {
+    "legajo": "No.",
+    "nombre": "Nombre",
+    "fecha_hora": "Fecha/Hora",
+    "tipo": "Estado",
+    "dispositivo": "Dispositivo"
+  }
+}

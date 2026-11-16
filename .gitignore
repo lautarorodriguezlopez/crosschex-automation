@@ -1,0 +1,7 @@
+# Credenciales y datos del personal: nunca al repositorio
+config.json
+data/
+reportes/
+logs/
+demo/
+__pycache__/
