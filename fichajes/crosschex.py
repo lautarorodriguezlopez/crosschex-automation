@@ -35,6 +35,9 @@ class CrossChexClient:
             raise CrossChexError(
                 "Faltan api_key / api_secret en config.json (sección 'crosschex')."
             )
+        if not base_url.lower().startswith("https://"):
+            # Las credenciales y los fichajes viajan en este pedido: nunca por HTTP plano.
+            raise CrossChexError("La base_url de CrossChex tiene que empezar con https://")
         self.base_url = base_url.rstrip("/") + "/"
         self.api_key = api_key
         self.api_secret = api_secret

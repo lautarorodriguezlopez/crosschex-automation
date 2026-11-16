@@ -4,7 +4,7 @@ Este proyecto baja los fichajes de **CrossChex** y los guarda en una carpeta loc
 
 ![Resumen del reporte](docs/resumen.png)
 
-▶ **[Ver el video de demostración](docs/demo.mp4)** (1:16, datos ficticios)
+▶ **[Ver el video de demostración](docs/demo.mp4)** (1:18, datos ficticios)
 
 Solo necesita **Python 3.10 o más nuevo**: usa la biblioteca estándar y no hay que instalar nada con pip.
 
@@ -100,6 +100,10 @@ python control_fichajes.py demo
 
 `todo` y `demo` aceptan `--sin-servidor` (solo genera el HTML) y `--no-abrir`.
 
-## Privacidad
+## Privacidad y seguridad
 
-`config.json`, `data/`, `reportes/` y `logs/` están en `.gitignore`. Las credenciales y los fichajes del personal no salen de la computadora, y el servidor escucha solo en `127.0.0.1`.
+`config.json`, `data/`, `reportes/` y `logs/` están en `.gitignore`. Las credenciales y los fichajes del personal no salen de la computadora: el servidor escucha solo en `127.0.0.1`, rechaza pedidos dirigidos a otros dominios (DNS rebinding) y el reporte tiene una CSP que no le permite conectarse a ningún sitio externo. El detalle está en [SECURITY.md](SECURITY.md).
+
+## Licencia
+
+[MIT](LICENSE). Proyecto independiente, sin relación con Anviz ni con CrossChex: los nombres se usan solo para indicar con qué sistema se conecta.

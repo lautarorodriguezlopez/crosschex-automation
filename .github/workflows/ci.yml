@@ -1,0 +1,35 @@
+# Prueba la herramienta con datos ficticios y controla que no se versionen datos ni credenciales.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Nada de credenciales ni fichajes versionados
+        run: |
+          if git ls-files | grep -E '^(config\.json|data/|reportes/|logs/|demo/)'; then
+            echo "::error::Hay archivos con credenciales o datos del personal en el repositorio."
+            exit 1
+          fi
+
+      - name: Compilar
+        run: python3 -m compileall -q control_fichajes.py fichajes
+
+      - name: Demo de punta a punta (sin credenciales)
+        run: |
+          python3 control_fichajes.py demo --sin-servidor --no-abrir
+          grep -q "Content-Security-Policy" demo/reportes/index.html
